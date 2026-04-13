@@ -1,0 +1,80 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* --- 1. Base Brand Styles --- */
+:root {
+  --brand-orange: #FF6A00;
+  --brand-bg: #f4f5f7;
+}
+
+@layer base {
+  body {
+    @apply bg-[#f4f5f7] text-gray-900;
+    font-family: 'Inter', sans-serif;
+  }
+
+  .font-calibri {
+    font-family: 'Calibri', 'Candara', 'Segoe UI', sans-serif;
+  }
+}
+
+/* --- 2. Custom Components --- */
+@layer components {
+  .btn-primary {
+    @apply bg-[#FF6A00] text-white text-xs font-bold tracking-widest uppercase px-8 py-4 
+           shadow-md hover:bg-white hover:text-gray-900 transition-colors duration-300;
+  }
+}
+
+/* --- 3. Marquee Animation (If not in tailwind.config.js) --- */
+@keyframes marqueeLtr {
+  0% { transform: translateX(-50%); }
+  100% { transform: translateX(0%); }
+}
+
+.animate-marquee-ltr {
+  display: flex;
+  width: 200%;
+  animation: marqueeLtr 25s linear infinite;
+}
+
+/* --- 4. Print Specific Styles (Your Request) --- */
+@media print {
+  /* Hide UI elements like Navbars and Footers */
+  .no-print, 
+  header, 
+  footer, 
+  nav, 
+  button {
+    display: none !important;
+  }
+
+  /* Force background colors to show in print (important for the Orange theme) */
+  body {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+    background-color: white !important;
+  }
+
+  /* Ensure the specific content is visible */
+  .printable {
+    display: block;
+    width: 100%;
+  }
+
+  /* Remove page gaps/margins */
+  @page {
+    margin-top: -65px;
+    /* margin: 20mm; */
+  }
+
+  /* Ensure text is high contrast for printers */
+  h1, h2, h3, p {
+    color: black !important;
+  }
+  
+  .text-brand, .text-\[\#FF6A00\] {
+    color: #FF6A00 !important;
+  }
+}

@@ -1,0 +1,260 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["driverAdapters"]
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model User {
+  id    String @id @default(uuid())
+  email String @unique
+}
+
+model Admin {
+  id            String    @id @default(uuid())
+  name          String
+  email         String?   @unique
+  contactNumber String    @unique
+  profile       String?
+  enabled       Boolean   @default(true)
+  deleted       Boolean   @default(false)
+  password      String
+  adminRoleId   Int
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  role          AdminRole @relation(fields: [adminRoleId], references: [id])
+  Sale          Sale[]
+}
+
+model AdminRole {
+  id        Int      @id @default(autoincrement())
+  roleName  String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  admins    Admin[]
+}
+
+model City {
+  id        String   @id @default(uuid())
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  clients   Client[]
+}
+
+model Client {
+  id            String     @id @default(uuid())
+  name          String
+  email         String?    @unique
+  address       String?
+  contactNumber String     @unique
+  clientType    ClientType @relation(fields: [clientTypeId], references: [id])
+  clientTypeId  String
+  cityId        String?
+  city          City?      @relation(fields: [cityId], references: [id])
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+  invoice       Invoice[]
+}
+
+model ClientType {
+  id        String   @id @default(uuid())
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  clients   Client[]
+  Prices    Prices[]
+}
+
+model Category {
+  id        String    @id @default(uuid())
+  name      String
+  image     String
+  desc      String?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  products  Product[]
+}
+
+model Product {
+  id          String        @id @default(uuid())
+  name        String
+  image       String
+  desc        String?
+  mrp         Float
+  gst         Float
+  category    Category      @relation(fields: [categoryId], references: [id])
+  categoryId  String
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  Prices      Prices[]
+  Inventory   Inventory[]
+  InvoiceItem InvoiceItem[]
+}
+
+model Prices {
+  id               String     @id @default(uuid())
+  startingQtyLimit Int
+  endingQtyLimit   Int
+  amount           Float
+  product          Product    @relation(fields: [productId], references: [id])
+  productId        String
+  clientType       ClientType @relation(fields: [clientTypeId], references: [id])
+  clientTypeId     String
+  createdAt        DateTime   @default(now())
+  updatedAt        DateTime   @updatedAt
+}
+
+model Invoice {
+  id              String        @id @default(uuid())
+  invoiceNumber   String
+  quantity        Int
+  subTotal        Float
+  total           Float
+  remainingAmount Float
+  paidAmount      Float
+  invoiceDate     DateTime
+  invoiceIsuuesd  Boolean       @default(false)
+  isPaid          Boolean       @default(false)
+  client          Client        @relation(fields: [clientId], references: [id])
+  clientId        String
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+  invoiceItem     InvoiceItem[]
+  sale            Sale?         @relation(fields: [saleId], references: [id])
+  saleId          String?       @unique
+  Payment         Payment[]
+}
+
+model Payment {
+  id          String   @id @default(uuid())
+  amount      Float
+  paymentDate DateTime
+  invoice     Invoice  @relation(fields: [invoiceId], references: [id])
+  invoiceId   String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model InvoiceItem {
+  id        String   @id @default(uuid())
+  quantity  Int
+  amount    Float
+  total     Float
+  invoice   Invoice  @relation(fields: [invoiceId], references: [id])
+  invoiceId String
+  product   Product  @relation(fields: [productId], references: [id])
+  productId String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// model Sale {
+//   id          String       @id @default(uuid())
+//   date        DateTime
+//   visitType   String       @default("0")
+//   remarks     String?
+//   invoice     Invoice?
+//   partner     Partner      @relation(fields: [partnerId], references: [id])
+//   partnerId   String
+//   createdAt   DateTime     @default(now())
+//   updatedAt   DateTime     @updatedAt
+//   commissions Commission[]
+// }
+
+model Sale {
+  id          String       @id @default(uuid())
+  date        DateTime
+  visitType   String       @default("0")
+  remarks     String?
+  invoice     Invoice?
+  admin       Admin        @relation(fields: [adminId], references: [id])
+  adminId     String
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  commissions Commission[]
+  Partner     Partner?     @relation(fields: [partnerId], references: [id])
+  partnerId   String?
+}
+
+model PartnerRole {
+  id      String    @id @default(uuid())
+  name    String    @unique
+  // Add any other fields related to partner roles here
+  Partner Partner[]
+}
+
+model Partner {
+  id            String       @id @default(uuid())
+  name          String
+  email         String?      @unique
+  contactNumber String       @unique
+  profile       String?
+  enabled       Boolean      @default(true)
+  deleted       Boolean      @default(false)
+  password      String
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+  sales         Sale[]
+  commissions   Commission[]
+  leader        Partner?     @relation("LeaderToMembers", fields: [leaderId], references: [id])
+  leaderId      String?      @map("leader_id")
+  members       Partner[]    @relation("LeaderToMembers")
+  role          PartnerRole  @relation(fields: [partnerRoleId], references: [id])
+  partnerRoleId String
+}
+
+model Commission {
+  id            String   @id @default(uuid())
+  paid          Boolean  @default(false)
+  dateOfPayment DateTime
+  salesId       String
+  sales         Sale     @relation(fields: [salesId], references: [id])
+  partnerId     String
+  partner       Partner  @relation(fields: [partnerId], references: [id])
+  amount        Int // You can specify the data type for the amount as per your requirements
+}
+
+model InventoryType {
+  id        String      @id @default(uuid())
+  name      String
+  desc      String?
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+  Inventory Inventory[]
+}
+
+model Inventory {
+  id              String            @id @default(uuid())
+  name            String
+  image           String?
+  qty             Float
+  inventoryType   InventoryType     @relation(fields: [inventoryTypeId], references: [id])
+  products        Product           @relation(fields: [productId], references: [id])
+  inventoryTypeId String
+  productId       String
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+  InventoryUpdate InventoryUpdate[]
+}
+
+model InventoryUpdate {
+  id            String    @id @default(uuid())
+  inventory     Inventory @relation(fields: [inventoryId], references: [id])
+  inventoryId   String
+  qty           Float
+  updateDate    DateTime  @default(now())
+  inward        Boolean   @default(true)
+  supplier      String?
+  notes         String?
+  invoiceNumber String
+  invoice       String? // Optional
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}

@@ -1,0 +1,1 @@
+export const s3bucketurl:string = 'https://ayurarogyam-assets.s3.ap-south-1.amazonaws.com'
