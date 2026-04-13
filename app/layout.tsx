@@ -15,7 +15,7 @@ const inter = Inter({ subsets: ['latin'] })
 
 export const metadata = {
   title: 'RJS coaters',
-  description: 'Elvate health with Ayurveda',
+  description: '',
 }
 
 export default function RootLayout({

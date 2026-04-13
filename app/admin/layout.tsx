@@ -14,8 +14,8 @@ import {authOptions}  from '../api/auth/[...nextauth]/options'
 
 
 export const metadata = {
-  title: 'Ayur-Arogyam',
-  description: 'Elvate health with Ayurveda',
+  title: 'RJS coaters',
+  description: '',
 }
 
 export default async function RootLayout({
