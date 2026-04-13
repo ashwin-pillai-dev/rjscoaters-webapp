@@ -67,14 +67,14 @@ const DefaultSidebar:React.FC<PropType> = ({sidebarVisible}) => {
                                     Kanban
                                 </p>
                             </Sidebar.Item>  */}
-                            <Sidebar.Item
+                            {/* <Sidebar.Item
                                href="/admin/categories/list"
                                 icon={BiCategoryAlt}
                             >
                                 <p>
                                     Categories
                                 </p>
-                            </Sidebar.Item>
+                            </Sidebar.Item> */}
 
                             <Sidebar.Item
                                 href="/admin/products/list"

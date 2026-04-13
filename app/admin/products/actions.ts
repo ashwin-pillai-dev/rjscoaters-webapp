@@ -2,110 +2,94 @@
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import prisma from '../../../lib/prisma';
-import { FileUpload } from '../common/services';
 import { type Prisma } from '@prisma/client'
 import { ProductFormData } from './productSchema';
 
-
-
-
-
-
-export async function addProduct(input:ProductFormData ) : Promise<Prisma.ProductGetPayload<{include:{category:true}}>> {
-    const { name, desc, mrp, category,gst } = input
-    console.log('category');
-    console.log(category);
+// Helper function to get the 'all' category ID
+async function getAllCategoryId() {
+    const category = await prisma.category.findFirst({
+        where: { name: 'all' }
+    });
     
-    // let fileObj: any = file;
-    const uploadResponse = ''
-    // const uploadResponse = await FileUpload(fileObj)
-
-    const data:Prisma.ProductCreateInput = {
-        name: name.toString(),
-        image: uploadResponse,
-        desc:desc.toString(),
-        mrp: parseFloat(mrp.toString()),
-        category:{
-            connect:{id:category.toString()}
-        },
-        gst:Number(gst.toString())
-
+    if (!category) {
+        throw new Error("Category 'all' not found. Please ensure it exists in your Turso DB.");
     }
-    console.log("product data");
-    console.log(data);
     
-    try {
+    return category.id;
+}
 
-            const product = await prisma.product.create({
-                data,
-                include:{
-                    category:true
+export async function addProduct(input: ProductFormData): Promise<Prisma.ProductGetPayload<{include:{category:true}}>> {
+    const { name, desc, mrp, gst } = input;
+    
+    // 1. Get the 'all' category ID specifically
+    const allCatId = await getAllCategoryId();
+
+    const data: Prisma.ProductCreateInput = {
+        name: name.toString(),
+        image: '', // Logic for FileUpload goes here
+        desc: desc.toString(),
+        mrp: parseFloat(mrp.toString()),
+        category: {
+            connect: { id: allCatId } // Hardcoded to 'all' category ID
+        },
+        gst: Number(gst.toString())
+    }
+
+    try {
+        const product = await prisma.product.create({
+            data,
+            include: { category: true }
+        });
+
+        // Find inventory type 'product'
+        const inventoryType = await prisma.inventoryType.findFirst({
+            where: { name: { equals: 'product' } }
+        });
+
+        if (inventoryType) {
+            await prisma.inventory.create({
+                data: {
+                    name: product.name,
+                    qty: 0,
+                    products: { connect: { id: product.id } },
+                    inventoryType: { connect: { id: inventoryType.id } }
                 }
             });
+        }
 
-            const inventoryType = await prisma.inventoryType.findFirst({where:{name:{
-                equals:'product'
-            }}});
-
-            const inventoryData:Prisma.InventoryCreateInput = {
-                name:product.name,
-                qty:0,
-                products:{
-                    connect:{id:product.id}
-                },
-                inventoryType:{
-                    connect:{
-                        id:inventoryType.id
-                    }
-                }
-            }
-            await  prisma.inventory.create({data:inventoryData})
-
-            return  product;
+        return product;
     } catch (error) {
         console.error('Error adding Product:', error);
         throw error;
     }
 }
 
-export async function updateProduct(input:ProductFormData,productId:string ) : Promise<Prisma.ProductGetPayload<{include:{category:true}}>> {
-    const { name, desc, mrp, category,gst } = input
-    console.log('category');
-    console.log(category);
+export async function updateProduct(input: ProductFormData, productId: string): Promise<Prisma.ProductGetPayload<{include:{category:true}}>> {
+    const { name, desc, mrp, gst } = input;
     
-    // let fileObj: any = file;
-    const uploadResponse = ''
-    // const uploadResponse = await FileUpload(fileObj)
+    // 1. Get the 'all' category ID specifically
+    const allCatId = await getAllCategoryId();
 
-    const data:Prisma.ProductCreateInput = {
+    const data: Prisma.ProductUpdateInput = {
         name: name.toString(),
-        image: uploadResponse,
-        desc:desc.toString(),
+        desc: desc.toString(),
         mrp: parseFloat(mrp.toString()),
-        category:{
-            connect:{id:category.toString()}
+        category: {
+            connect: { id: allCatId } // Force update to 'all' category
         },
-        gst:Number(gst.toString())
-
+        gst: Number(gst.toString())
     }
-    console.log("product data");
-    console.log(data);
-    
+
     try {
+        const product = await prisma.product.update({
+            where: { id: productId },
+            data,
+            include: { category: true }
+        });
 
-            const product = await prisma.product.update({
-                data,
-                include:{
-                    category:true
-                },
-                where:{
-                    id:productId
-                }
-            });
-
-            return  product;
+        return product;
     } catch (error) {
-        console.error('Error adding Product:', error);
+        console.error('Error updating Product:', error);
         throw error;
     }
 }
