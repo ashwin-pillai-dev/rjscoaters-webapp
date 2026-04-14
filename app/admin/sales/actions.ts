@@ -220,7 +220,7 @@ async function generateInvoiceNumber() {
 
     // Combine the random characters, digits, and timestamp to create the invoice number
     const invoiceTotal = await prisma.invoice.count()
-    const invoiceNumber = `SS-${invoiceTotal + 1}-${formattedYearRange}`;
+    const invoiceNumber = `RJS-${invoiceTotal + 1}-${formattedYearRange}`;
 
     return invoiceNumber;
 }

@@ -51,15 +51,15 @@ const Invoice: React.FC<InvoiceProps> = ({ invoice }) => {
 
                 {/* Header Section */}
                 <div className="flex justify-between items-start mb-6">
-                    <Image height={120} width={120} src="/rjs-logo.png" alt="Ayurarogyam" />
+                    <Image height={120} width={120} src="/rjs-logo.png" alt="RJS Coaters" />
                     <div className="text-left max-w-[50%] flex flex-col">
-                        <h1 className="text-2xl font-semibold mb-2">Systematic Solutions</h1>
+                        <h1 className="text-2xl font-semibold mb-2">RJS Coaters</h1>
                         <p className="text-gray-700 break-words">
-                            Unit no: 33, 2nd Floor, GNP Galaxy Industrial Estate,
+                            Plot no.H-57, Additional MIDC Kudavali
                         </p>
-                        <p className="text-gray-700 break-words">Opp. Ordnance Factory,Amebrnath (w) - 421501. </p>
+                        <p className="text-gray-700 break-words">Amebrnath West </p>
 
-                        <p className="text-gray-700 break-words">GSTIN: 27AQVPP5015F1ZJ</p>
+                        <p className="text-gray-700 break-words">GSTIN: </p>
                     </div>
                 </div>
 
@@ -140,7 +140,7 @@ const Invoice: React.FC<InvoiceProps> = ({ invoice }) => {
                 </div>
 
                 {/* Terms and Conditions */}
-                <div className="mt-6">
+                {/* <div className="mt-6">
                     <h3 className="text-xl font-semibold mb-2">Terms and Conditions</h3>
                     <p className="text-gray-700">
                         - Goods once sold will not be taken back if returned after two (2) days from the date of delivery.
@@ -160,7 +160,7 @@ const Invoice: React.FC<InvoiceProps> = ({ invoice }) => {
                         Account Number: 41675439353<br />
                         IFSC Code: SBIN0051555
                     </p>
-                </div>
+                </div> */}
 
                 {/* Footer Section */}
                 <div className="mt-8 border-t border-gray-300 pt-4 text-center text-gray-600">
