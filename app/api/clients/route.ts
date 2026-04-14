@@ -43,7 +43,7 @@ export async function GET(request: Request) {
             },
             include:{
                 clientType:true,
-                // city:true
+                city:true
             }
         }
         );

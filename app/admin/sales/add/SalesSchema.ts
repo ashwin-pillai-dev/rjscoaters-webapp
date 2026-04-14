@@ -17,11 +17,10 @@ export const addedItemSchema = z.object({
 
 export const saleSchema = z.object({
   date: z.string().min(1,{message:'Date must be selected'}),
-  clientId: z.string({ required_error: 'Please select a client',invalid_type_error:'Please select a client' })
-  .uuid({ message: 'Client ID must be a valid UUID' }),
-  partnerId: z.string({ required_error: 'Please select a partner',invalid_type_error:'Please select a partner' }) .uuid({ message: 'Partner ID must be a valid UUID' }),
+  clientId: z.string({ required_error: 'Please select a client',invalid_type_error:'Please select a client' }),
+  partnerId: z.string({ required_error: 'Please select a partner',invalid_type_error:'Please select a partner' }),
   visitType: z.string().default('0'),
-  remarks: z.string({required_error:'Please provide sale details',invalid_type_error:'Please provide sale details'}).min(1,{message:'Please provide sale details'}),
+  remarks: z.string(),
   addedItems: z.array(addedItemSchema).min(1,{message:'Minimum one product required to add a sale'}),
   paidAmount: z.number(), // Price should be retrieved from product
   remainingAmount: z.number(), // Price should be retrieved from product
