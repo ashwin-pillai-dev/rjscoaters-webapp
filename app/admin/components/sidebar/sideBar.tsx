@@ -7,6 +7,8 @@ import { HiChartPie, HiShoppingBag, HiTable, HiUser } from 'react-icons/hi';
 import { TbTableShare } from 'react-icons/tb';
 import { MdOutlineInventory2 } from 'react-icons/md';
 import { TbBusinessplan } from 'react-icons/tb';
+import { MdContactMail } from "react-icons/md";
+
 
 
 
@@ -115,6 +117,14 @@ const DefaultSidebar:React.FC<PropType> = ({sidebarVisible}) => {
                             >
                                 <p>
                                     Sales
+                                </p>
+                            </Sidebar.Item>
+                                                        <Sidebar.Item
+                                href="/admin/leads"
+                                icon={MdContactMail }
+                            >
+                                <p>
+                                    Leads
                                 </p>
                             </Sidebar.Item>
                         </Sidebar.ItemGroup>
