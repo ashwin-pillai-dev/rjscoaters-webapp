@@ -13,7 +13,7 @@ export default async function page() {
     const categories = await getCategories(params)
     return (
         <div>
-            <ProductForm categories={categories.data} />
+            <ProductForm  />
         </div>
 
     )
