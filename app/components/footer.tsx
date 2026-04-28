@@ -6,7 +6,7 @@ export default function DefaultFooter() {
   return (
     <Footer container className='mx-auto my-0' >
       <Footer.Copyright
-        by="Ayurarogyam"
+        by="RJS Coaters"
         href="#"
         year={2022}
       />
